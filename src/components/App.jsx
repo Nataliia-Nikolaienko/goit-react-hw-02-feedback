@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import Sections from './Sections/Sections';
 import FeedbackOptions from './FeedbackOptions/FeedbackOptions';
-import Statistics from './FeedbackOptions/Statistic';
-import Notification from './FeedbackOptions/Notification';
+import Statistics from './Statistic/Statistic';
+import Notification from '../components/Notification/Notification';
 
 class App extends Component {
   state = {
@@ -20,7 +20,12 @@ class App extends Component {
   };
 
   countTotalFeedback = () => {
-    const total = this.state.good + this.state.neutral + this.state.bad;
+    const values = Object.values(this.state);
+    const total = values.reduce(
+      (totalFeedback, value) => totalFeedback + value,
+      0
+    );
+
     return total;
   };
 
@@ -31,10 +36,12 @@ class App extends Component {
   };
 
   render() {
+    const countTotal = this.countTotalFeedback();
+    const countPercentage = this.countPositiveFeedbackPercentage();
     return (
       <Sections title="Please leave feedback">
         <FeedbackOptions
-          options={['good', 'neutral', 'bad']}
+          options={[...Object.keys(this.state)]}
           onLeaveFeedback={this.onLeaveFeedback}
         />
         {this.countTotalFeedback() === 0 ? (
@@ -44,8 +51,8 @@ class App extends Component {
             good={this.state.good}
             neutral={this.state.neutral}
             bad={this.state.bad}
-            total={this.countTotalFeedback()}
-            positivePercentage={this.countPositiveFeedbackPercentage()}
+            total={countTotal}
+            positivePercentage={countPercentage}
           />
         )}
       </Sections>
